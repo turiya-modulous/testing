@@ -1,0 +1,761 @@
+openapi: 3.0.0
+
+info:
+  version: '0.1'
+  title: project
+  description: |
+    The projects service that focuses on storing all data related to the main flow of the application.
+    This involves storing data such as projects, sites, zones and generated design options.
+
+servers:
+  - url: 'http://localhost:{port}'
+    description: Local
+    variables:
+      port:
+        default: '3000'
+  - url: 'https://project.api.dev.env.rouge.dev'
+    description: Development
+
+tags:
+  - name: project
+  - name: project-site
+  - name: project-site-zone-brief
+  - name: project-design-option
+
+paths:
+
+  # --
+  # -- project
+  # --
+
+  '/projects':
+    get:
+      operationId: get-project-collection
+      summary: |
+        List all projects
+      tags:
+        - project
+      responses:
+        '200':
+          description: |
+            A project resource collection has been returned
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  type: { type: string, enum: ['pager'] }
+                  meta: { $ref: '#/components/schemas/PaginationMetadata' }
+                  results: { $ref: '#/components/schemas/ProjectResourceCollection' }
+
+    post:
+      operationId: post-project-resource
+      summary: |
+        Create a new project
+      tags:
+        - project
+      requestBody:
+        description: |
+          New project resource requirements
+        content:
+          'application/json':
+            schema: { $ref: '#/components/schemas/ProjectResourceForCreation' }
+      responses:
+        '201':
+          description: |
+            A project resource has been created and returned
+          content:
+            'application/json':
+              schema: { $ref: '#/components/schemas/ProjectResource' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+
+  '/projects/{projectId}':
+    patch:
+      operationId: patch-project-resource
+      summary: |
+        Update an existing project
+      tags:
+        - project
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+      requestBody:
+        description: |
+          Partial project resource requirements
+        content:
+          'application/json':
+            schema: { $ref: '#/components/schemas/ProjectResourceForUpdate' }
+      responses:
+        '200':
+          description: |
+            An updated project resource has been returned
+          content:
+            'application/json':
+              schema: { $ref: '#/components/schemas/ProjectResource' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/ResourceNotFound' }
+
+    delete:
+      operationId: delete-project-resource
+      summary: |
+        Delete an existing project
+      tags:
+        - project
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+      responses:
+        '204':
+          description: |
+            A project resource has been deleted
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/ResourceNotFound' }
+
+  # --
+  # -- project-site
+  # --
+
+  '/projects/{projectId}/sites':
+    get:
+      operationId: get-project-site-collection
+      summary: |
+        List the sites for the given project
+      tags:
+        - project-site
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+      responses:
+        '200':
+          description: |
+            A project site resource collection has been returned
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  type: { type: string, enum: ['pager'] }
+                  meta: { $ref: '#/components/schemas/PaginationMetadata' }
+                  results: { $ref: '#/components/schemas/ProjectSiteResourceCollection' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/ResourceNotFound' }
+
+    post:
+      operationId: post-project-site-resource
+      summary: |
+        Create a new site for the given project
+      tags:
+        - project-site
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+      requestBody:
+        description: |
+          New project site requirements
+        content:
+          'application/json':
+            schema: { $ref: '#/components/schemas/ProjectSiteResourceForCreation' }
+      responses:
+        '201':
+          description: |
+            A project site resource has been created
+          content:
+            'application/json':
+              schema: { $ref: '#/components/schemas/ProjectSiteResource' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/ResourceNotFound' }
+
+  '/projects/{projectId}/sites/{projectSiteId}':
+    get:
+      operationId: get-project-site-resource
+      summary: |
+        Return the specified site for the given project
+      tags:
+        - project-site
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/SiteId' }
+      responses:
+        '200':
+          description: |
+            A project site resource has been returned
+          content:
+            'application/json':
+              schema: { $ref: '#/components/schemas/ProjectSiteResource' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/ResourceNotFound' }
+
+    delete:
+      operationId: delete-project-site-resource
+      summary: |
+        Delete the specified site for the given project
+      tags:
+        - project-site
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/SiteId' }
+      responses:
+        '204':
+          description: |
+            A project site resource has been deleted
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/ResourceNotFound' }
+
+  # --
+  # -- project-site-zone-brief
+  # --
+
+  '/projects/{projectId}/sites/{projectSiteId}/zones/{projectSiteZoneId}/brief':
+    get:
+      operationId: get-project-site-zone-brief-resource
+      summary: |
+        Return the brief for the given site and zone
+      tags:
+      - project-site-zone-brief
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/SiteId' }
+        - { $ref: '#/components/parameters/ZoneId' }
+      responses:
+        '200':
+          description: |
+            A project brief resource has been returned
+          content:
+            'application/json':
+              schema: { $ref: '#/components/schemas/ProjectSiteZoneBriefResourceResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/ResourceNotFound' }
+
+    post:
+      operationId: post-project-site-zone-brief-resource
+      summary: |
+        Create a brief for the given site and zone
+      tags:
+        - project-site-zone-brief
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/SiteId' }
+        - { $ref: '#/components/parameters/ZoneId' }
+      requestBody:
+        description: |
+          Create a new brief specifying all requirements
+        content:
+          'application/json':
+            schema: { $ref: '#/components/schemas/ProjectSiteZoneBriefResourceResponse' }
+      responses:
+        '200':
+          description: |
+            A project brief resource has been created and returned
+          content:
+            'application/json':
+              schema: { $ref: '#/components/schemas/ProjectSiteZoneBriefResourceResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/ResourceNotFound' }
+        # '409': { $ref: '#/components/responses/ResourceExists' }
+
+    patch:
+      operationId: patch-project-site-zone-brief-resource
+      summary: |
+        Update the brief for the given site and zone
+      tags:
+      - project-site-zone-brief
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/SiteId' }
+        - { $ref: '#/components/parameters/ZoneId' }
+      requestBody:
+        description: |
+          Partial project brief requirements.
+          All properties are optional and only those specified in the request body
+          will be updated.
+        content:
+          'application/json':
+            schema: { $ref: '#/components/schemas/ProjectSiteZoneBriefResourceForUpdate' }
+      responses:
+        '200':
+          description: |
+            An updated project brief resource has been returned
+          content:
+            'application/json':
+              schema: { $ref: '#/components/schemas/ProjectSiteZoneBriefResourceResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/ResourceNotFound' }
+
+  # --
+  # -- project-design-option
+  # --
+
+  '/projects/{projectId}/design-options':
+    get:
+      operationId: get-project-design-option-collection
+      summary: |
+        List all design options for the given project
+      tags:
+        - project-design-option
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+      responses:
+        '200':
+          description: |
+            A design option resource collection has been returned
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  type: { type: string, enum: ['pager'] }
+                  meta: { $ref: '#/components/schemas/PaginationMetadata' }
+                  results:
+                    type: array
+                    items: { $ref: '#/components/schemas/ProjectDesignOptionResource' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/ResourceNotFound' }
+
+  '/projects/{projectId}/design-options/{projectDesignOptionId}':
+    get:
+      operationId: get-project-design-option-resource
+      summary: |
+        Return the specified design option
+      tags:
+        - project-design-option
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/DesignOptionId' }
+      responses:
+        '200':
+          description: |
+            A design option resource has been returned
+          content:
+            'application/json':
+              schema: { $ref: '#/components/schemas/ProjectDesignOptionResourceResponseWithBriefs' }
+        '404': { $ref: '#/components/responses/ResourceNotFound' }
+
+    delete:
+      operationId: delete-project-design-option-resource
+      summary: |
+        Delete the specified design option
+      tags:
+        - project-design-option
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/DesignOptionId' }
+      responses:
+        '204':
+          description: |
+            A project design option resource has been deleted
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/ResourceNotFound' }
+
+  '/projects/{projectId}/sites/{projectSiteId}/design-options':
+    get:
+      operationId: get-project-site-design-option-collection
+      summary: |
+        List all design options for the given site
+      tags:
+        - project-design-option
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/SiteId' }
+      responses:
+        '200':
+          description: |
+            A design option resource collection has been returned
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  type: { type: string, enum: ['pager'] }
+                  meta: { $ref: '#/components/schemas/PaginationMetadata' }
+                  results:
+                    type: array
+                    items: { $ref: '#/components/schemas/ProjectDesignOptionResource' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/ResourceNotFound' }
+
+    post:
+      operationId: post-project-design-option-resource
+      summary: |
+        Create a new design option for the given site
+      tags:
+        - project-design-option
+      parameters:
+        - { $ref: '#/components/parameters/ProjectId' }
+        - { $ref: '#/components/parameters/SiteId' }
+      requestBody:
+        description: |
+          New design option requirements
+        content:
+          'application/json':
+            schema: { $ref: '#/components/schemas/ProjectDesignOptionResourceForCreation' }
+      responses:
+        '201':
+          description: |
+            A new design option resource has been created
+          content:
+            'application/json':
+              schema: { $ref: '#/components/schemas/ProjectDesignOptionResourceResponse' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '404': { $ref: '#/components/responses/ResourceNotFound' }
+
+
+components:
+
+  # --
+  # -- Parameters
+  # --
+
+  parameters:
+
+    ProjectId:
+      in: path
+      name: projectId
+      schema: { $ref: '#/components/schemas/Identity' }
+      required: true
+
+    SiteId:
+      in: path
+      name: projectSiteId
+      schema: { $ref: '#/components/schemas/Identity' }
+      required: true
+
+    ZoneId:
+      in: path
+      name: projectSiteZoneId
+      schema: { $ref: '#/components/schemas/Identity' }
+      required: true
+
+    DesignOptionId:
+      in: path
+      name: projectDesignOptionId
+      schema: { $ref: '#/components/schemas/Identity' }
+      required: true
+
+  # --
+  # -- Responses
+  # --
+
+  responses:
+
+    ValidationError:
+      description: |
+        A general validation error has occured.
+        This could be related to the path parameters, query parameters or the post body.
+        The origin of this error will be better explained in the returned response body.
+
+    ResourceNotFound:
+      description: |
+        A resource that was referenced was not found.
+        This might be a resource identity taken from path or query parameters.
+        Or in the case of a post request, this might be because of a dependant resource identity within the post body is invalid or not found.
+
+  schemas:
+
+    # --
+    # -- Value Schemas
+    # --
+
+    Identity:
+      type: string
+      format: uuid
+      description: |
+        An unique resource identity generated by the system.
+        This will take the form of a uuid:4 formatted string.
+        When referencing resources this is the only field that will be required.
+
+    ResourceReference:
+      type: object
+      properties:
+        id: { $ref: '#/components/schemas/Identity' }
+      description: |
+        An object containing only the ID of the related resource.
+
+    DateTime:
+      type: string
+      format: date-time
+      description: |
+        A [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) formatted date time string with milliseconds as per the specification.
+        All dates and times will be targetting the UTC timezone, so localisation of the date should be done on the client side.
+        Like-wise, when accepting a date time the timezone <ins>MUST</ins> must be targetting UTC, validation maybe done and requests might fail if time skew is detected.
+
+    PaginationMetadata:
+      type: object
+      properties:
+        total: { type: number }
+        limit: { type: number }
+        page: { type: number }
+        pages: { type: number }
+      description: |
+        An object that contains metadata about the pagination response.
+        This contains the total results available in the dataset and the amount of pages avaialble with the current limit.
+
+    GeoPoint:
+      type: array
+      items: { type: number }
+      minItems: 2
+      maxItems: 2
+      description: |
+        A [ISO-6709](https://en.wikipedia.org/wiki/ISO_6709) compliant set of co-ordinates for a geographic point on a sphere (Earth for now).
+        The first number is the [Latitude](https://en.wikipedia.org/wiki/Latitude) and the second is [Longitude](https://en.wikipedia.org/wiki/Longitude).
+        Both values are required and will be normalised to `7` digits of precision.
+
+    GeoPolygon:
+      type: array
+      items: { $ref: '#/components/schemas/GeoPoint' }
+      minItems: 3
+      description: |
+        An array of `3` or more `GeoPoint` values.
+
+    NumberValueRange:
+      type: object
+      properties:
+        minimum: { type: number }
+        maximum: { type: number }
+      minItems: 2
+      maxItems: 2
+      required:
+        - minimum
+        - maximum
+      description: |
+        An object representing a range of values.
+
+    # --
+    # -- Project Schemas
+    # --
+
+    ProjectResourceForCreation:
+      type: object
+      properties:
+        name: { type: string }
+      required:
+        - name
+
+    ProjectResourceForUpdate: { $ref: '#/components/schemas/ProjectResourceForCreation' }
+
+    ProjectResource:
+      type: object
+      properties:
+        id: { $ref: '#/components/schemas/Identity' }
+        name: { type: string }
+        area_of_interest: { $ref: '#/components/schemas/GeoPoint' }
+        created_at: { $ref: '#/components/schemas/DateTime' }
+        updated_at: { $ref: '#/components/schemas/DateTime' }
+
+    ProjectResourceCollection:
+      type: array
+      items: { $ref: '#/components/schemas/ProjectResource' }
+
+    # --
+    # -- Site Schemas
+    # --
+
+    ProjectSiteResourceForCreation:
+      type: object
+      properties:
+        location: { $ref: '#/components/schemas/GeoPoint' }
+        location_name: { type: string }
+        description:  { type: string }
+        boundary: { $ref: '#/components/schemas/GeoPolygon' }
+        area: { type: number }
+        zones:
+          type: array
+          items: { $ref: '#/components/schemas/ProjectSiteZoneResourceForCreation' }
+      required:
+        - location
+        - location_name
+        - boundary
+        - area
+        - zones
+
+    ProjectSiteResource:
+      type: object
+      properties:
+        id: { $ref: '#/components/schemas/Identity' }
+        project: { $ref: '#/components/schemas/ResourceReference' }
+        location: { $ref: '#/components/schemas/GeoPoint' }
+        location_name: { type: string }
+        description:  { type: string }
+        boundary: { $ref: '#/components/schemas/GeoPolygon' }
+        area: { type: number }
+        created_at: { $ref: '#/components/schemas/DateTime' }
+        zones: { $ref: '#/components/schemas/ProjectSiteZoneResourceCollection' }
+
+    ProjectSiteResourceReference:
+      type: object
+      properties:
+        id: { $ref: '#/components/schemas/Identity' }
+
+    ProjectSiteResourceCollection:
+      type: array
+      items: { $ref: '#/components/schemas/ProjectSiteResource' }
+
+    ProjectSiteZoneResourceForCreation:
+      type: object
+      properties:
+        name: { type: string }
+        type:
+          type: string
+          enum:
+            - buildable
+            - exclusion
+        boundary: { $ref: '#/components/schemas/GeoPolygon' }
+        area: { type: number }
+      required:
+        - type
+        - boundary
+        - area
+
+    ProjectSiteZoneResource:
+      type: object
+      properties:
+        id: { $ref: '#/components/schemas/Identity' }
+        name: { type: string }
+        type:
+          type: string
+          enum:
+            - buildable
+            - exclusion
+        boundary: { $ref: '#/components/schemas/GeoPolygon' }
+        area: { type: number }
+        created_at: { $ref: '#/components/schemas/DateTime' }
+
+    ProjectSiteZoneResourceCollection:
+      type: array
+      items: { $ref: '#/components/schemas/ProjectSiteZoneResource' }
+
+    # --
+    # -- Brief Schemas
+    # --
+
+    ProjectSiteZoneBriefResourceForUpdate:
+      type: object
+      properties:
+        zone: { $ref: '#/components/schemas/ResourceReference' }
+        building_count: { $ref: '#/components/schemas/NumberValueRange' }
+        land_coverage: { $ref: '#/components/schemas/NumberValueRange' }
+        building_height: { $ref: '#/components/schemas/NumberValueRange' }
+        residential_floors: { $ref: '#/components/schemas/NumberValueRange' }
+        clear_internal_height:
+          type: number
+        unit_count: { $ref: '#/components/schemas/NumberValueRange' }
+        unit_mix:
+          type: array
+          items: { $ref: '#/components/schemas/ProjectSiteZoneBriefDistribution' }
+        podium_enabled:
+          type: boolean
+        podium_use_type:
+          type: string
+          enum: [ 'commercial' ]
+        podium_levels: { $ref: '#/components/schemas/NumberValueRange' }
+        podium_height: { $ref: '#/components/schemas/NumberValueRange' }
+
+    ProjectSiteZoneBriefResourceResponse:
+      allOf:
+        - $ref: '#/components/schemas/ProjectSiteZoneBriefResourceForUpdate'
+        - type: object
+          properties:
+            id: { $ref: '#/components/schemas/Identity' }
+            created_at: { $ref: '#/components/schemas/DateTime' }
+            updated_at: { $ref: '#/components/schemas/DateTime' }
+
+    ProjectSiteZoneBriefResourceForCreation:
+      allOf:
+        - $ref: '#/components/schemas/ProjectSiteZoneBriefResourceForCreation'
+        - type: object
+          required:
+            - building_count
+            - land_coverage
+            - building_height
+            - residential_floors
+            - clear_internal_height
+            - unit_count
+            - unit_mix
+            - podium_enabled
+
+    ProjectSiteZoneBriefDistribution:
+      type: object
+      properties:
+        unit_type_alias:
+          type: string
+        percentage:
+          type: number
+
+    # --
+    # -- Design Option Schemas
+    # --
+
+    ProjectDesignOptionResourceForCreation:
+      type: object
+      properties:
+        name: { type: string }
+        aggregation:
+          type: object
+          properties:
+            file:
+              type: object
+              properties:
+                id: { $ref: '#/components/schemas/Identity' }
+                url: { type: string, format: url }
+        metrics:
+          type: object
+          properties:
+            unit_count: { type: number }
+            density: { type: number }
+            number_of_floors: { type: number }
+            building_height: { type: number }
+            building_footprint: { type: number }
+            land_coverage: { type: number }
+            gia: { type: number }
+            nia: { type: number }
+            residential_efficiency: { type: number }
+            facade_area: { type: number }
+            indicative_form_factor: { type: number }
+      required:
+        - name
+        - aggregation
+        - metrics
+
+    ProjectDesignOptionResource:
+      type: object
+      properties:
+        project: { $ref: '#/components/schemas/ResourceReference' }
+        site: { $ref: '#/components/schemas/ResourceReference' }
+        name: { type: string }
+        aggregation:
+          type: object
+          properties:
+            file:
+              type: object
+              properties:
+                id: { $ref: '#/components/schemas/Identity' }
+                url: { type: string, format: url }
+        metrics:
+          type: object
+          properties:
+            unit_count: { type: number }
+            density: { type: number }
+            number_of_floors: { type: number }
+            building_height: { type: number }
+            building_footprint: { type: number }
+            land_coverage: { type: number }
+            gia: { type: number }
+            nia: { type: number }
+            residential_efficiency: { type: number }
+            facade_area: { type: number }
+            indicative_form_factor: { type: number }
+        created_at: { $ref: '#/components/schemas/DateTime' }
+        updated_at: { $ref: '#/components/schemas/DateTime' }
+
+    ProjectDesignOptionResourceResponse:
+      allOf:
+        - $ref: '#/components/schemas/ProjectDesignOptionResource'
+        - type: object
+          properties:
+            id: { $ref: '#/components/schemas/Identity' }
+            created_at: { $ref: '#/components/schemas/DateTime' }
+            updated_at: { $ref: '#/components/schemas/DateTime' }
+
+    ProjectDesignOptionResourceResponseWithBriefs:
+      allOf:
+        - $ref: '#/components/schemas/ProjectDesignOptionResourceResponse'
+        - type: object
+          properties:
+            briefs:
+              type: array
+              items: { $ref: '#/components/schemas/ProjectSiteZoneBriefResourceResponse' }
