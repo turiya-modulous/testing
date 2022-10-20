@@ -3,7 +3,7 @@ name: 'Deploy: Swagger'
 on:
   push:
     branches:
-      - master
+      - next
     paths:
       - .github/workflows/deploy-docs.yaml
       - service/swagger.yaml
