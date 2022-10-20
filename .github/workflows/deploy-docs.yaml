@@ -41,6 +41,11 @@ jobs:
     # Specify runner + deployment step
     runs-on: ubuntu-latest
     steps:
+      - name: Generate Swagger UI
+        uses: Legion2/swagger-ui-action@v1
+        with:
+          output: swagger-ui
+          spec-file: service/swagger.yaml
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1

@@ -15,7 +15,7 @@ jobs:
           name: spec-file
           path: swagger.yml
   deploy:
-    needs: generate-swagger-ui
+    needs: upload-artifact
     runs-on: ubuntu-latest
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
