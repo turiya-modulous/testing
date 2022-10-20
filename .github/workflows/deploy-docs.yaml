@@ -10,7 +10,7 @@ on:
       - deploy/package.json
 
 env:
-  TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+  GITHUB_TOKEN: ${{ github.token }}
 
 jobs:
   # Build job
@@ -19,8 +19,8 @@ jobs:
     steps:
       - uses: actions/upload-artifact@master
         with:
-          name: spec-file
-          path: service/swagger.yaml
+          name: swagger.yaml
+          path: service
           if-no-files-found: error
 
   # Deploy job
