@@ -13,17 +13,21 @@ env:
   GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
 jobs:
-  # Build job
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+      - run: npm ci --no-scripts
       - uses: actions/upload-artifact@master
         with:
           name: swagger.yaml
           path: service/swagger.yaml
           if-no-files-found: error
-
 
   # Deploy job
   deploy:
