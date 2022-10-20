@@ -18,17 +18,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          registry-url: 'https://registry.npmjs.org'
-          cache: 'npm'
-      - run: npm ci --no-scripts
+      # - uses: actions/setup-node@v3
+      #   with:
+      #     node-version: 16
+      #     registry-url: 'https://registry.npmjs.org'
+      #     cache: 'npm'
+      # - run: npm ci --no-scripts
       - uses: actions/upload-artifact@master
         with:
           name: swagger.yaml
           path: service/swagger.yaml
           if-no-files-found: error
+
 
   # Deploy job
   deploy:
@@ -48,12 +49,15 @@ jobs:
     # Specify runner + deployment step
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
       - name: Generate Swagger UI
-        uses: Legion2/swagger-ui-action@v1
+        id: deployment
+        uses:
+          actions/checkout@v3
+          Legion2/swagger-ui-action@v1
         with:
           output: swagger-ui
           spec-file: service/swagger.yaml
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
+      - uses:
+          actions/checkout@v3
+          actions/deploy-pages@v1
