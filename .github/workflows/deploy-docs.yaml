@@ -6,7 +6,7 @@ on:
       - next
     paths:
       - .github/workflows/deploy-docs.yaml
-      - swagger.yaml
+      - service/swagger.yaml
       - deploy/package.json
 
 env:
@@ -20,7 +20,7 @@ jobs:
       - uses: actions/upload-artifact@master
         with:
           name: spec-file
-          path: swagger.yaml
+          path: service/swagger.yaml
           if-no-files-found: error
 
   # Deploy job
