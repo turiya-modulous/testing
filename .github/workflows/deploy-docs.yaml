@@ -3,7 +3,7 @@ name: 'Deploy: Swagger'
 on:
   push:
     branches:
-      - next
+      - master
     paths:
       - .github/workflows/deploy-docs.yaml
       - service/swagger.yaml
@@ -20,7 +20,7 @@ jobs:
       - uses: actions/upload-artifact@master
         with:
           name: swagger.yaml
-          path: service
+          path: service/swagger.yaml
           if-no-files-found: error
 
   # Deploy job
