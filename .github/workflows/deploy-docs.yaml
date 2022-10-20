@@ -7,7 +7,7 @@ on:
     paths:
       - .github/workflows/deploy-docs.yaml
       - service/swagger.yaml
-      - deploy/package.json
+      - package.json
 
 env:
   GITHUB_TOKEN: ${{ github.token }}
