@@ -7,25 +7,13 @@ on:
     paths:
       - .github/workflows/deploy-docs.yaml
       - service/swagger.yaml
-      - package.json
 
 env:
   GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
 jobs:
-  # build:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: actions/upload-artifact@master
-  #       with:
-  #         name: swagger.yaml
-  #         path: service/swagger.yaml
-  #         if-no-files-found: error
 
   deploy:
-    # needs: build
-
     permissions:
       pages: write
       id-token: write
@@ -50,7 +38,6 @@ jobs:
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          # Upload entire repository
           path: 'service/swagger-ui'
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v1
