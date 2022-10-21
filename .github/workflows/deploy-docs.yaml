@@ -8,8 +8,8 @@ on:
       - .github/workflows/deploy-docs.yaml
       - service/swagger.yaml
 
-env:
-  GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+#env:
+#  GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
 jobs:
 
