@@ -31,7 +31,6 @@ jobs:
         uses: actions/configure-pages@v2
       - run: mkdir service/src/swagger-ui
       - name: Generate Swagger UI
-        id: deployment
         uses: Legion2/swagger-ui-action@v1
         with:
           output: service/src/swagger-ui
@@ -41,6 +40,7 @@ jobs:
         with:
           path: 'service/src/swagger-ui'
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v1
       - name: Verify page
         run: |
