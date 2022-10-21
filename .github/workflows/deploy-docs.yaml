@@ -38,7 +38,7 @@ jobs:
         uses: actions/deploy-pages@v1
       - name: Verify page
         run: |
-          if [ "$(curl -ILs https://turiya-modulous.github.io/testing/ | grep "HTTP/2 200")" ] ; then
+          if [ "$(curl -ILs https://turiya-modulous.github.io/testing/ | grep "squirrel")" ] ; then
               exit 0
           else
               echo -e "Failed to get a 200 response from URL" && exit 1;
