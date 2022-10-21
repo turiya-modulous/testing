@@ -13,18 +13,18 @@ env:
   GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/upload-artifact@master
-        with:
-          name: swagger.yaml
-          path: service/swagger.yaml
-          if-no-files-found: error
+  # build:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/upload-artifact@master
+  #       with:
+  #         name: swagger.yaml
+  #         path: service/swagger.yaml
+  #         if-no-files-found: error
 
   deploy:
-    needs: build
+    # needs: build
 
     permissions:
       pages: write
@@ -43,7 +43,6 @@ jobs:
         uses: Legion2/swagger-ui-action@v1
         with:
           output: service/swagger-ui
-          # swagger-config-file: service/swagger-config.yaml
           spec-file: service/swagger.yaml
       - run: ls -a
       - run: ls -ar service

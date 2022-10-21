@@ -1,7 +1,0 @@
----
-urls:
-  - name: Main
-    url: swagger.yaml
-  - name: Nested
-    url: service/swagger.yaml
-displayOperationId: true
