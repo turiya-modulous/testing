@@ -37,11 +37,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - run: mkdir service/swagger-ui
       - name: Generate Swagger UI
         id: deployment
         uses: Legion2/swagger-ui-action@v1
         with:
-          output: swagger-ui
+          output: service/swagger-ui
+          # swagger-config-file: service/swagger-config.yaml
           spec-file: service/swagger.yaml
+      - run: ls -a
+      - run: ls -ar service
+      - run: ls -ar service/swagger-ui
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Upload entire repository
+          path: 'service/swagger-ui'
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v1
