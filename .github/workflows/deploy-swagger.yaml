@@ -49,8 +49,6 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v1
 
-      - run: echo ${{ steps.deployment.outputs.page_url }}
-
       - name: Smoketest URL
         run: |
           if [ "$(curl -ILs ${{ steps.deployment.outputs.page_url }} | grep "HTTP/2 200")" ] ; then
